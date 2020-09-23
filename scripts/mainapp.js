@@ -12949,8 +12949,8 @@ function CeptaaMap() {
     addStreetMapLyr();
     addLocationsLyr();
     mMapView = new ol_default.a.View({
-      // 16Sep2020 center: OL.proj.fromLonLat([-95.7129, 37.0902]),
-      center: ol_default.a.proj.fromLonLat([-0.127, 37.0902]),
+      center: ol_default.a.proj.fromLonLat([-95.7129, 37.0902]),
+      // 22Sep2020 center: OL.proj.fromLonLat([-0.127, 37.0902]),
       zoom: 3.2
     });
     mMap = new ol_default.a.Map({
