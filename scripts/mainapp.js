@@ -12989,7 +12989,7 @@ function CeptaaMap() {
             case 4:
               mMapView = new ol_default.a.View({
                 center: ol_default.a.proj.fromLonLat([-95.7129, 37.0902]),
-                zoom: 4.2
+                zoom: 4.0
               });
               mMap = new ol_default.a.Map({
                 layers: mMapLayers,
