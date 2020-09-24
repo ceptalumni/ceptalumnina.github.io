@@ -12857,72 +12857,86 @@ function CeptaaMap() {
   }
 
   function addLocationsLyr() {
-    var locationsLyrIndex;
-    var locationsLyr;
-    var featuresColl;
-    var featSource;
-    var clusterSource;
-    var clusterDistance = 25;
-    var mStyleCache = {};
-    featuresColl = getLocationFeatColl();
-    /* var coord = OL.proj.fromLonLat([-84, 33]);
-    var point = new OL.geom.Point(coord);
-    var feat = new OL.Feature({
-      geometry: point
-    });
-    feat.setStyle(symbolStyle); */
+    return _addLocationsLyr.apply(this, arguments);
+  }
 
-    locationsLyrIndex = mMapLayersList.find(function (d) {
-      return d.Label === mLocationsLyrLabel;
-    }).Index;
-    /*  // 16Sep2020 locationsLyr = new OL.layer.Vector({
-      title: "Locations",
-      source: new OL.source.Vector({
-        features: featuresColl,
-        overlaps: false
-      })
-    }); */
+  function _addLocationsLyr() {
+    _addLocationsLyr = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var locationsLyrIndex, locationsLyr, featuresColl, featSource, clusterSource, clusterDistance, mStyleCache;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              clusterDistance = 25;
+              mStyleCache = {};
+              featuresColl = getLocationFeatColl();
+              /* var coord = OL.proj.fromLonLat([-84, 33]);
+              var point = new OL.geom.Point(coord);
+              var feat = new OL.Feature({
+                geometry: point
+              });
+              feat.setStyle(symbolStyle); */
 
-    featSource = new ol_default.a.source.Vector({
-      features: featuresColl // overlaps: false
+              locationsLyrIndex = mMapLayersList.find(function (d) {
+                return d.Label === mLocationsLyrLabel;
+              }).Index;
+              /*  // 16Sep2020 locationsLyr = new OL.layer.Vector({
+                title: "Locations",
+                source: new OL.source.Vector({
+                  features: featuresColl,
+                  overlaps: false
+                })
+              }); */
 
-    });
-    clusterSource = new ol_default.a.source.Cluster({
-      distance: parseInt(clusterDistance, 10),
-      source: featSource
-    });
-    locationsLyr = new ol_default.a.layer.Vector({
-      title: "Locations",
-      source: clusterSource,
-      style: function style(feature) {
-        var size = feature.get("features").length;
-        var style = mStyleCache[size];
+              featSource = new ol_default.a.source.Vector({
+                features: featuresColl // overlaps: false
 
-        if (!style) {
-          style = new ol_default.a.style.Style({
-            image: new ol_default.a.style.Circle({
-              radius: 10,
-              stroke: new ol_default.a.style.Stroke({
-                color: "#fff"
-              }),
-              fill: new ol_default.a.style.Fill({
-                color: "blue"
-              })
-            }),
-            text: new ol_default.a.style.Text({
-              text: size.toString(),
-              fill: new ol_default.a.style.Fill({
-                color: "#fff"
-              })
-            })
-          });
-          mStyleCache[size] = style;
+              });
+              clusterSource = new ol_default.a.source.Cluster({
+                distance: parseInt(clusterDistance, 10),
+                source: featSource
+              });
+              locationsLyr = new ol_default.a.layer.Vector({
+                title: "Locations",
+                source: clusterSource,
+                style: function style(feature) {
+                  var size = feature.get("features").length;
+                  var style = mStyleCache[size];
+
+                  if (!style) {
+                    style = new ol_default.a.style.Style({
+                      image: new ol_default.a.style.Circle({
+                        radius: 10,
+                        stroke: new ol_default.a.style.Stroke({
+                          color: "#fff"
+                        }),
+                        fill: new ol_default.a.style.Fill({
+                          color: "blue"
+                        })
+                      }),
+                      text: new ol_default.a.style.Text({
+                        text: size.toString(),
+                        fill: new ol_default.a.style.Fill({
+                          color: "#fff"
+                        })
+                      })
+                    });
+                    mStyleCache[size] = style;
+                  }
+
+                  return style;
+                }
+              });
+              mMapLayers[locationsLyrIndex] = locationsLyr;
+
+            case 8:
+            case "end":
+              return _context.stop();
+          }
         }
-
-        return style;
-      }
-    });
-    mMapLayers[locationsLyrIndex] = locationsLyr;
+      }, _callee);
+    }));
+    return _addLocationsLyr.apply(this, arguments);
   }
 
   function displayMapTooltip(evt) {
@@ -12939,33 +12953,66 @@ function CeptaaMap() {
 
     if (!feature || !Object.prototype.hasOwnProperty.call(feature.getProperties(), "Name")) {
       return;
-    }
+    } // console.log(feature.get("Name"));
 
-    console.log(feature.get("Name"));
+  }
+
+  function zoomToMapExtent() {
+    var layerExtent;
+    var locationsLyrSource;
+    var locationsLyrIndex;
+    locationsLyrIndex = mMapLayersList.find(function (d) {
+      return d.Label === mLocationsLyrLabel;
+    }).Index;
+    locationsLyrSource = mMapLayers[locationsLyrIndex].getSource();
+    layerExtent = locationsLyrSource.getExtent();
+    mMapView.fit(layerExtent, {
+      size: mMap.getSize()
+    });
   }
 
   function loadMap() {
-    mMapLayers = [];
-    addStreetMapLyr();
-    addLocationsLyr();
-    mMapView = new ol_default.a.View({
-      center: ol_default.a.proj.fromLonLat([-95.7129, 37.0902]),
-      // 22Sep2020 center: OL.proj.fromLonLat([-0.127, 37.0902]),
-      zoom: 3.2
-    });
-    mMap = new ol_default.a.Map({
-      layers: mMapLayers,
-      target: "map",
-      view: mMapView
-    });
-    mMap.getControls().forEach(function (control) {
-      if (control instanceof ol_default.a.control.Attribution) {
-        mMap.removeControl(control);
-      }
-    }, this);
-    mMap.on("singleclick", function (evt) {
-      displayMapTooltip(evt);
-    });
+    return _loadMap.apply(this, arguments);
+  }
+
+  function _loadMap() {
+    _loadMap = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              mMapLayers = [];
+              addStreetMapLyr();
+              _context2.next = 4;
+              return addLocationsLyr();
+
+            case 4:
+              mMapView = new ol_default.a.View({
+                center: ol_default.a.proj.fromLonLat([-95.7129, 37.0902]),
+                zoom: 4.5
+              });
+              mMap = new ol_default.a.Map({
+                layers: mMapLayers,
+                target: "map",
+                view: mMapView
+              });
+              mMap.getControls().forEach(function (control) {
+                if (control instanceof ol_default.a.control.Attribution) {
+                  mMap.removeControl(control);
+                }
+              }, this);
+              mMap.on("singleclick", function (evt) {
+                displayMapTooltip(evt);
+              }); // 23Sep2020 zoomToMapExtent();
+
+            case 8:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+    return _loadMap.apply(this, arguments);
   }
 
   function loadMembersList() {
@@ -12973,23 +13020,23 @@ function CeptaaMap() {
   }
 
   function _loadMembersList() {
-    _loadMembersList = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      return regeneratorRuntime.wrap(function _callee$(_context) {
+    _loadMembersList = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
-              _context.next = 2;
+              _context3.next = 2;
               return getJsonFile("members_list.json");
 
             case 2:
-              mMembersList = _context.sent;
+              mMembersList = _context3.sent;
 
             case 3:
             case "end":
-              return _context.stop();
+              return _context3.stop();
           }
         }
-      }, _callee);
+      }, _callee3);
     }));
     return _loadMembersList.apply(this, arguments);
   }
